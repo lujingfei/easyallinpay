@@ -8,5 +8,10 @@
             "email": "44568889@qq.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Geoff\\EasyAllinpay\\": "src/"
+        }
+    }
 }
