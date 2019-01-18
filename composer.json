@@ -1,0 +1,12 @@
+{
+    "name": "geoff/easyallinpay",
+    "description": "通联支付laravel扩展包",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "geoff",
+            "email": "44568889@qq.com"
+        }
+    ],
+    "require": {}
+}
