@@ -14,7 +14,7 @@ class Payment
         $uri = 'https://vsp.allinpay.com/apiweb/unitorder/pay';
         $data = array_merge($data, [
             'sub_appid' => config('easyallinpay.sub_appid'),
-            'paytype' => conifg('easyallinpay.pay_type'),
+            'paytype' => config('easyallinpay.pay_type'),
             'cusip' => isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1',
         ]);
         return $this->_post($data, $uri);
