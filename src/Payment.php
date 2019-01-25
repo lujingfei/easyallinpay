@@ -23,7 +23,6 @@ class Payment
     public function refund(array $data)
     {
         $uri = 'https://vsp.allinpay.com/apiweb/unitorder/refund';
-        $data = array_merge($data, ['op_user_id' => config('easyswiftpass.mch_id')]);
         return $this->_post($data, $uri);
     }
 
@@ -64,13 +63,14 @@ class Payment
         foreach ($data as $key => $value) {
             $str .= "{$key}={$value}&";
         }
-        return $str;
+        return substr($str, 0, strlen($str)-1);
     }
 
     private function _getMD5Sign($data)
     {
         $mch_key = config('easyallinpay.mch_key');
-        $str = $this->_getSignStr($data) . "key=" . $mch_key;
+        $data['key'] = $mch_key;
+        $str = $this->_getSignStr($data);
         return strtoupper(md5($str));
     }
 
@@ -87,7 +87,8 @@ class Payment
             'timeout' => self::HTTP_TIMEOUT,
         ]);
         $response = $client->request('POST', $uri, ['form_params' => $this->_prepare($data)]);
-        return $response->getBody()->getContents();
+        $content = $response->getBody()->getContents();
+        return json_decode($content);
     }
 
     private function _prepare(array $data)
