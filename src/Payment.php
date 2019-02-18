@@ -20,8 +20,8 @@ class Payment
     {
         $uri = 'https://vsp.allinpay.com/apiweb/unitorder/pay';
         $data = array_merge($data, [
-            'sub_appid' => config($this->config . 'easyallinpay.sub_appid'),
-            'paytype' => config($this->config . 'easyallinpay.pay_type'),
+            'sub_appid' => config('easyallinpay.' . $this->config . '.sub_appid'),
+            'paytype' => config('easyallinpay.' . $this->config . '.pay_type'),
             'cusip' => isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '127.0.0.1',
         ]);
         return $this->_post($data, $uri);
@@ -48,7 +48,7 @@ class Payment
     public function isValidSign($sign, $data)
     {
         if ($data['sign_type'] === self::SIGN_TYPE_RSA) {
-            return openssl_verify($this->_getRSASign($data), base64_decode($sign), config('easyswiftpass.rsa_public_key'), OPENSSL_ALGO_SHA256) === 1;
+            return openssl_verify($this->_getRSASign($data), base64_decode($sign), config('easyswiftpass.' . $this->config . '.rsa_public_key'), OPENSSL_ALGO_SHA256) === 1;
         } else {
             return $sign === $this->_getMD5Sign($data);
         }
@@ -75,7 +75,7 @@ class Payment
 
     private function _getMD5Sign($data)
     {
-        $mch_key = config($this->config . 'easyallinpay.mch_key');
+        $mch_key = config('easyallinpay.' . $this->config . '.mch_key');
         $data['key'] = $mch_key;
         $str = $this->_getSignStr($data);
         return strtoupper(md5($str));
@@ -84,7 +84,7 @@ class Payment
     private function _getRSASign($data)
     {
         $str = rtrim($this->_getSignStr($data), '&');
-        openssl_sign($str, $signature, config($this->config . 'easyallinpay.rsa_private_key'), OPENSSL_ALGO_SHA256);
+        openssl_sign($str, $signature, config('easyallinpay.' . $this->config . '.rsa_private_key'), OPENSSL_ALGO_SHA256);
         return base64_encode($signature);
     }
 
@@ -100,10 +100,10 @@ class Payment
 
     private function _prepare(array $data)
     {
-        $data['cusid'] = config($this->config . 'easyallinpay.mch_id');
-        $data['appid'] = config($this->config . 'easyallinpay.appid');
+        $data['cusid'] = config('easyallinpay.' . $this->config . '.mch_id');
+        $data['appid'] = config('easyallinpay.' . $this->config . '.appid');
         $data['randomstr'] = $this->_getNonceStr();
-        if (config($this->config . 'easyallinpay.sign_type') === self::SIGN_TYPE_RSA) {
+        if (config('easyallinpay.' . $this->config . '.sign_type') === self::SIGN_TYPE_RSA) {
             $data['sign_type'] = self::SIGN_TYPE_RSA;
             $data['sign'] = $this->_getRSASign($data);
         } else {
